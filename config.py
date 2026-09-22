@@ -1,38 +1,31 @@
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
+
 # GROQ
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+GROQ_API_KEY = os.getenv(
+    "GROQ_API_KEY"
+)
 
 GROQ_MODEL = os.getenv(
     "GROQ_MODEL",
     "openai/gpt-oss-120b"
 )
 
-
 if not GROQ_API_KEY:
+
     raise ValueError(
-        "GROQ_API_KEY is missing. "
-        "Add it to your .env file."
+        "GROQ_API_KEY is missing."
     )
-
-
-# API SECURITY
-# API_SECRET_KEY = os.getenv(
-#     "API_SECRET_KEY"
-# )
-
-# if not API_SECRET_KEY:
-#     raise ValueError(
-#         "API_SECRET_KEY is missing. "
-#         "Add it to your .env file."
-#     )
 
 
 
 # LANGSMITH
+
 LANGSMITH_API_KEY = os.getenv(
     "LANGSMITH_API_KEY"
 )
@@ -50,6 +43,7 @@ LANGSMITH_PROJECT = os.getenv(
 
 
 # MONGODB
+
 MONGODB_URI = os.getenv(
     "MONGODB_URI"
 )
@@ -67,6 +61,7 @@ MONGODB_COLLECTION = os.getenv(
 
 
 # ADMIN
+
 ADMIN_PASSWORD = os.getenv(
     "ADMIN_PASSWORD"
 )
@@ -74,6 +69,7 @@ ADMIN_PASSWORD = os.getenv(
 
 
 # CHROMA
+
 CHROMA_DIR = "chroma_db"
 
 CHROMA_COLLECTION = (
@@ -81,20 +77,19 @@ CHROMA_COLLECTION = (
 )
 
 
+
 # RETRIEVAL
+
 TOP_K = 12
+
 FINAL_TOP_K = 4
+
 RELEVANCE_THRESHOLD = 0.20
 
 
+
 # CHUNKING
+
 CHUNK_SIZE = 350
+
 CHUNK_OVERLAP = 80
-
-
-
-# FRONTEND / API
-# API_URL = os.getenv(
-#     "API_URL",
-#     "http://127.0.0.1:8000"
-# )
