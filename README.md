@@ -1,105 +1,126 @@
-# 🩺 Diabetes RAG Chatbot
+🩺 Diabetes Medical RAG Assistant
+A medical Retrieval-Augmented Generation (RAG) chatbot focused on Diabetes medical information.
 
-An AI-powered medical question-answering system focused on
-diabetes-related information using Retrieval-Augmented Generation (RAG).
+##Live Demo
+https://diabetes-medical-rag-lpjhcaxglefwmsayewvgup.streamlit.app/
 
-## 📌 Project Overview
+##Project Overview
+This project is a medical RAG chatbot designed to provide educational information about Diabetes using a medical knowledge base. The application combines document retrieval, semantic embeddings, ChromaDB, LangGraph, Groq, security controls, MongoDB, and Streamlit.
 
-This project is a medical RAG chatbot designed to answer
-diabetes-related questions using trusted medical documents Example :
+##RAG
+Retrieval-Augmented Generation (RAG) retrieves relevant information from the medical knowledge base before sending the retrieved context to the language model.
 
- about diabetes symptoms, causes, risk factors, type 1 and type 2 diabetes, MODY, prevention, diagnosis, management, low blood glucose, insulin, medicines, A1C tests, diabetes and food, pregnancy, gum disease, sexual and urological problems, eye disease, kidney disease, and heart disease.
 
-Instead of relying only on the language model's internal knowledge,
-the system retrieves relevant information from a medical knowledge base
-and provides the retrieved context to the LLM before generating an answer.
+##System Architecture
 
-The system is designed to reduce hallucinations and provide
-source-aware medical information.
-
-## 🏗️ System Architecture
-
-Diabetes Medical Documents
-        ↓
-Document Loading
-        ↓
-Document Cleaning
-        ↓
-Chunking
-        ↓
-Sentence Transformer
-        ↓
-Embeddings
-        ↓
+Internet
+   ↓
+Streamlit Cloud
+   ↓
+app.py
+   ↓
+LangGraph
+   ↓
+Security → Retrieval → Context → Groq → Output Guard
+   ↓
 ChromaDB
-        ↓
-User Question
-        ↓
-Security Guard
-        ↓
-Diabetes Topic Guard
-        ↓
-Semantic Retrieval
-        ↓
-Relevance Filtering
-        ↓
-Context Building
-        ↓
-Medical Prompt
-        ↓
-Groq LLM
-        ↓
-Grounded Answer
-        ↓
-Source Documents
-        ↓
+   ↓
 MongoDB
-        ↓
-Feedback & Evaluation
 
 
-## 🛠️ Technologies Used
-
-### Frontend
-- Streamlit
-
-### Backend
-- FastAPI
-- Uvicorn
-
-### LLM / Generative AI
-- Groq
-- Large Language Model
-
-### RAG
-- LangChain
-- LangGraph
-- ChromaDB
-
-### Embeddings
-- Sentence Transformers
-- HuggingFace Embeddings
-
-### Database
-- ChromaDB for vector search
-- MongoDB for chat history and feedback
-
-### Monitoring
-- LangSmith
-
-### Document Processing
-- PyPDF
-- python-docx
-- Recursive Character Text Splitter
-
-### Programming Language
-- Python 3.11
+##RAG Workflow
+User Question
+   ↓
+Security Check
+   ↓
+Retrieve Relevant Documents
+   ↓
+Build Medical Context
+   ↓
+Generate Answer with Groq
+   ↓
+Output Guard
+   ↓
+Answer + Sources
+   ↓
+MongoDB Chat History
 
 
-## 📂 Project Structure
+##Document Loading
+Medical documents are stored inside data/medical_docs/. The ingestion pipeline loads supported medical documents and prepares them for retrieval.
 
-```text
-Rag_Medical/
+##Chunking
+Documents are divided into smaller text chunks using RecursiveCharacterTextSplitter. Chunk size and overlap are controlled through the project configuration.
+
+##Embeddings
+Sentence Transformers convert document chunks and user questions into numerical vector representations. A multilingual embedding model supports Arabic and English questions.
+
+##ChromaDB
+ChromaDB stores document embeddings and enables semantic similarity search over the medical knowledge base.
+
+##Retrieval Configuration
+TOP_K controls the initial number of retrieved candidates. FINAL_TOP_K controls the maximum number of relevant documents passed to the final context.
+
+##Relevance Filtering
+Retrieved documents are filtered using a configurable relevance threshold before being included in the final context.
+
+##Context Building
+Retrieved chunks are combined into structured medical context containing source information, page information when available, relevance information, and document content.
+
+##LangGraph
+LangGraph manages the workflow for security checking, retrieval, context validation, answer generation, and output protection.
+
+##Security
+The application protects against prompt injection and requests for sensitive information such as API keys, passwords, system prompts, developer prompts, environment variables, and private application data.
+
+##Prompt Injection Protection
+User input is checked before retrieval and generation. Requests attempting to override application instructions or reveal protected information are blocked.
+
+##Output Protection
+Generated output is checked for patterns that may indicate credentials or private application information before the response is displayed.
+
+##Medical Safety
+The chatbot provides educational medical information. It does not claim to diagnose users or provide personalized medical treatment. Potentially urgent symptoms should be evaluated by an appropriate healthcare professional.
+
+##Groq
+Groq is used as the language-model provider through LangChain. The configured model is controlled through the GROQ_MODEL environment variable.
+
+##MongoDB
+MongoDB stores chat history and feedback separately from the medical vector knowledge base.
+
+##Feedback
+Users can provide positive or negative feedback about generated answers. Feedback is stored in MongoDB.
+
+##Admin Dashboard
+The Streamlit sidebar provides an administrator area protected by an administrator password. Authenticated administrators can review stored chat history.
+
+
+
+##Project Files
+
+File
+Responsibility
+app.py
+Streamlit interface and direct RAG execution
+graph.py
+LangGraph workflow
+generator.py
+Groq LLM generation
+retriever.py
+ChromaDB retrieval and context building
+embeddings.py
+Sentence Transformer embeddings
+ingest.py
+Medical document loading, chunking and indexing
+security.py
+Prompt-injection and secret-request protection
+output_guard.py
+Generated-output protection
+
+
+##Project Structure
+
+E:\Rag_Medical
 │
 ├── app.py
 ├── api.py
@@ -117,298 +138,89 @@ Rag_Medical/
 ├── health.py
 ├── evaluation.py
 │
-├── data/
-│   └── medical_docs/
-│       └── diabetes.pdf
-│
-├── chroma_db/
-│
 ├── requirements.txt
 ├── .env
 ├── .env.example
 ├── .gitignore
-└── README.md
-
-
-```markdown
-## 📄 File Responsibilities
-
-| File | Responsibility |
-|---|---|
-| `app.py` | Streamlit user interface |
-| `api.py` | FastAPI backend |
-| `graph.py` | LangGraph workflow |
-| `generator.py` | Groq LLM generation |
-| `retriever.py` | ChromaDB retrieval |
-| `embeddings.py` | Sentence Transformer embeddings |
-| `ingest.py` | Document ingestion and chunking |
-| `security.py` | Input security and prompt-injection protection |
-| `output_guard.py` | Output security |
-| `prompts.py` | Medical system prompt |
-| `config.py` | Environment configuration |
-| `database.py` | MongoDB operations |
-| `feedback.py` | User feedback |
-| `health.py` | System health checks |
-| `evaluation.py` | Retrieval evaluation |
-
-
-## 🔎 How RAG Works
-
-The chatbot follows a Retrieval-Augmented Generation architecture.
-
-### 1. Document Ingestion
-
-Medical documents are loaded from:
-
-`data/medical_docs/`
-
-Supported formats include:
-
-- PDF
-- TXT
-- DOCX
-
-### 2. Chunking
-
-Large documents are divided into smaller chunks using
-RecursiveCharacterTextSplitter.
-
-### 3. Embeddings
-
-Each chunk is converted into a numerical vector using
-a pretrained multilingual Sentence Transformer.
-
-### 4. Vector Database
-
-The embeddings are stored in ChromaDB.
-
-### 5. User Question
-
-The user asks a diabetes-related question in Arabic or English.
-
-### 6. Retrieval
-
-The question is converted into an embedding and compared
-with the medical document embeddings.
-
-### 7. Relevance Filtering
-
-The system retrieves the most relevant chunks and filters
-out results below the configured relevance threshold.
-
-### 8. Generation
-
-The retrieved context is passed to the Groq LLM.
-
-The LLM generates an answer based primarily on the retrieved
-medical context.
-
-### 9. Sources
-
-The system returns the source document names used to generate
-the answer.
-
-
-## 🔐 Security
-
-The project includes multiple security layers.
-
-### Input Security
-
-The system detects requests attempting to reveal:
-
-- API keys
-- passwords
-- system prompts
-- developer prompts
-- environment variables
-- private application data
-
-### Prompt Injection Protection
-
-User instructions cannot override the medical system instructions.
-
-### Output Protection
-
-Generated responses are checked before being returned to the user.
-
-### Secrets Management
-
-Sensitive credentials are stored in environment variables.
-
-The `.env` file is excluded from Git using `.gitignore`.
-
-API keys and database credentials are never hard-coded
-into the source code.
-
-
-## ⚕️ Medical Safety
-
-This chatbot provides educational medical information.
-
-It does not:
-
-- Diagnose diseases
-- Replace a doctor
-- Provide personalized prescriptions
-- Guarantee medical conclusions
-
-For urgent or potentially dangerous symptoms,
-users should seek appropriate professional medical care.
-
-
-## 🗄️ MongoDB
-
-MongoDB is used to store application data such as:
-
-- Chat questions
-- Generated answers
-- Source documents
-- Timestamps
-- User feedback
-
-MongoDB is not used as the medical knowledge base.
-
-The medical knowledge base is stored in ChromaDB.
-
-
-## 🔌 Frontend and Backend
-
-The application separates the frontend from the backend.
-
-### Streamlit
-
-Provides the user interface.
-
-### FastAPI
-
-Provides the REST API used by the frontend.
-
-Communication:
-
-Streamlit
-    ↓ HTTP POST
-FastAPI `/chat`
-    ↓
-LangGraph
-    ↓
-RAG Pipeline
-    ↓
-Groq
-    ↓
-FastAPI
-    ↓
-Streamlit
-
-
-
----
-
-# Run project
-
-```markdown
-## 🚀 Installation
-
-### 1. Clone the repository
-
-```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd Rag_Medical
-
+├── README.md
+│
+├── data/
+│   └── medical_docs/
+│       └── diabetes.pdf
+│
+└── chroma_db/
+
+
+##Backend Integration
+The current architecture integrates the RAG workflow directly into Streamlit. app.py invokes the LangGraph workflow directly and does not require a separate backend server for normal application execution.
+
+##Installation
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 
 
-### 3. Environment Variables
-Create a `.env` file in the root directory and add the following configuration:
-
-```env
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL= openai/gpt-oss-120b
-
-LANGSMITH_API_KEY=your_langsmith_api_key_here
-LANGSMITH_TRACING=true
+##Environment Variables
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=your_groq_model
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_TRACING=false
 LANGSMITH_PROJECT=medical-rag-chatbot
-
-MONGODB_URI=your_mongodb_connection_string_here
+MONGODB_URI=your_mongodb_uri
 MONGODB_DATABASE=medical_rag
 MONGODB_COLLECTION=chat_history
+ADMIN_PASSWORD=your_admin_password
 
-ADMIN_PASSWORD=your_secure_admin_password_here
+##Git Ignore
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+chroma_db/
+.ipynb_checkpoints/
 
 
----
-
-# Buliding ChromaDB
-
-```markdown
-## 📚 Build the Medical Knowledge Base
-
-Place medical documents inside:
-
-```text
-data/medical_docs/
-
+##Building the Knowledge Base
 python ingest.py
 
-## ▶️ Run Backend
 
-```bash
-uvicorn api:app --reload
-http://127.0.0.1:8000
-http://127.0.0.1:8000/docs
+##Streamlit Cloud Deployment
+The application can be deployed directly to Streamlit Cloud. Sensitive environment variables are configured through Streamlit Cloud Secrets.
 
----
+##RAG Evaluation
+RAG evaluation should measure retrieval quality and answer quality separately. Retrieval can be evaluated using relevant documents, relevance scores, and coverage of supported medical questions.
 
-# Run Streamlit
+##RAG vs Model Training
+This project uses RAG rather than training the language model on the medical documents. Documents are indexed into a vector database and retrieved at query time.
 
-```markdown
-## 🖥️ Run Frontend
+##Technologies
+Python, Streamlit, LangChain, LangGraph, LangSmith, ChromaDB, Sentence Transformers, Hugging Face embeddings, Groq, MongoDB, PyPDF, python-docx, Git, and GitHub.
 
-Open another terminal:
+##Security Architecture
+Security is implemented through input validation, prompt-injection protection, protected system instructions, output protection, environment-based secret management, and administrator authentication.
 
-```bash
-streamlit run app.py
+##Limitations
+The chatbot is limited by the content and quality of the medical documents available in its knowledge base. It is not a replacement for a qualified healthcare professional.
 
----
+##Future Improvements
+Possible improvements include expanding the trusted medical knowledge base, improving retrieval evaluation, adding reranking, improving Arabic medical terminology retrieval, and expanding automated RAG evaluation.
 
-## architecture
+##Medical Knowledge Sources
+The medical knowledge base should use reliable and authoritative medical references such as recognized medical organizations and official health information sources.
+
+##Current Deployment
+The current application is deployed as a Streamlit application and uses the integrated architecture described in this README.
+
+##Project Status
+The project is currently focused on Diabetes medical information and uses ChromaDB retrieval, Sentence Transformer embeddings, LangGraph orchestration, Groq generation, MongoDB storage, security controls, and Streamlit.
+
+##Disclaimer
+This project is for educational and software-development purposes. It does not provide medical diagnosis or personalized medical treatment. Users should consult qualified healthcare professionals for medical decisions.
 
 
-```text
-                         ┌──────────────┐
-                         │   Streamlit  │
-                         │  Diabetes UI │
-                         └──────┬───────┘
-                                │
-                              HTTP
-                                │
-                         ┌──────▼───────┐
-                         │   FastAPI    │
-                         └──────┬───────┘
-                                │
-                         ┌──────▼───────┐
-                         │  LangGraph   │
-                         └──────┬───────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │ Security + Topic Guard│
-                    └───────────┬───────────┘
-                                │
-                         ┌──────▼───────┐
-                         │   ChromaDB   │
-                         │   Retrieval  │
-                         └──────┬───────┘
-                                │
-                         Relevant Context
-                                │
-                         ┌──────▼───────┐
-                         │   Groq LLM   │
-                         └──────┬───────┘
-                                │
-                           Grounded Answer
-                                │
-                     ┌──────────▼──────────┐
-                     │ Sources + MongoDB   │
-                     └─────────────────────┘
+
+
+
+
+
