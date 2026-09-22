@@ -1,10 +1,6 @@
 import os
-
 from dotenv import load_dotenv
-
-
 load_dotenv()
-
 
 
 # GROQ
@@ -24,15 +20,15 @@ if not GROQ_API_KEY:
 
 
 # API SECURITY
-API_SECRET_KEY = os.getenv(
-    "API_SECRET_KEY"
-)
+# API_SECRET_KEY = os.getenv(
+#     "API_SECRET_KEY"
+# )
 
-if not API_SECRET_KEY:
-    raise ValueError(
-        "API_SECRET_KEY is missing. "
-        "Add it to your .env file."
-    )
+# if not API_SECRET_KEY:
+#     raise ValueError(
+#         "API_SECRET_KEY is missing. "
+#         "Add it to your .env file."
+#     )
 
 
 
@@ -85,12 +81,10 @@ CHROMA_COLLECTION = (
 )
 
 
-
 # RETRIEVAL
 TOP_K = 12
 FINAL_TOP_K = 4
 RELEVANCE_THRESHOLD = 0.20
-
 
 
 # CHUNKING
@@ -100,7 +94,7 @@ CHUNK_OVERLAP = 80
 
 
 # FRONTEND / API
-API_URL = os.getenv(
-    "API_URL",
-    "http://127.0.0.1:8000"
-)
+# API_URL = os.getenv(
+#     "API_URL",
+#     "http://127.0.0.1:8000"
+# )
