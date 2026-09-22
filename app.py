@@ -1,13 +1,10 @@
 import os
 import hmac
-import requests
-
 import streamlit as st
 
-from config import (
-    API_URL,
-    API_SECRET_KEY
-)
+from config import ADMIN_PASSWORD
+
+from graph import medical_graph
 
 from database import (
     save_chat,
@@ -19,6 +16,7 @@ from feedback import save_feedback
 
 
 # PAGE CONFIGURATION
+
 st.set_page_config(
     page_title="Diabetes Medical RAG Assistant",
     page_icon="🩺",
@@ -26,7 +24,9 @@ st.set_page_config(
 )
 
 
+
 # TITLE
+
 st.title(
     "🩺 Diabetes Medical RAG Assistant"
 )
@@ -54,13 +54,12 @@ st.warning(
 
 
 # ADMIN
+
 with st.sidebar:
 
     st.header("🔐 Admin")
 
-    admin_password = os.getenv(
-        "ADMIN_PASSWORD"
-    )
+    admin_password = ADMIN_PASSWORD
 
     password_input = st.text_input(
         "Admin password",
@@ -93,8 +92,9 @@ with st.sidebar:
             )
 
 
-
+    
     # ADMIN CHAT HISTORY
+
     if st.session_state.get(
         "admin_authenticated",
         False
@@ -198,6 +198,7 @@ with st.sidebar:
 
 
 # SESSION CHAT HISTORY
+
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
@@ -216,6 +217,7 @@ for message in st.session_state.messages:
 
 
 # USER QUESTION
+
 question = st.chat_input(
     "Ask your Diabetes medical question in Arabic or English..."
 )
@@ -225,6 +227,7 @@ if question:
 
     
     # SHOW USER QUESTION
+
     st.session_state.messages.append({
         "role": "user",
         "content": question
@@ -237,6 +240,7 @@ if question:
 
     
     # ASSISTANT
+
     with st.chat_message("assistant"):
 
         with st.spinner(
@@ -245,148 +249,48 @@ if question:
 
             try:
 
-                
-                # API REQUEST
-                response = requests.post(
+            
+                # RUN MEDICAL RAG DIRECTLY
 
-                    f"{API_URL}/chat",
-
-                    json={
+                result = medical_graph.invoke(
+                    {
                         "question": question
-                    },
+                    }
+                )
 
-                    headers={
-                        "X-API-Key":
-                        API_SECRET_KEY
-                    },
+                answer = result.get(
+                    "answer",
+                    "No answer generated."
+                )
 
-                    timeout=120
+                sources = result.get(
+                    "sources",
+                    []
                 )
 
 
             
-                # SUCCESS
-                if response.status_code == 200:
+                # SAVE CHAT TO MONGODB
 
-                    data = response.json()
+                try:
 
-                    answer = data.get(
-                        "answer",
-                        "No answer generated."
+                    save_chat(
+                        question,
+                        answer,
+                        sources
                     )
 
-                    sources = data.get(
-                        "sources",
-                        []
+                except Exception as error:
+
+                    print(
+                        f"Database error: "
+                        f"{type(error).__name__}"
                     )
-
-
-                    
-                    # SAVE CHAT TO MONGODB
-                    try:
-
-                        save_chat(
-                            question,
-                            answer,
-                            sources
-                        )
-
-                    except Exception:
-
-                        # Do not expose
-                        # database errors
-                        # to the user.
-
-                        pass
-
-
-                
-                # UNAUTHORIZED
-                elif response.status_code == 401:
-
-                    answer = (
-                        "Authentication failed. "
-                        "Please contact the administrator."
-                    )
-
-                    sources = []
-
-
-                
-                # RATE LIMIT
-                elif response.status_code == 429:
-
-                    answer = (
-                        "Too many requests. "
-                        "Please wait a moment and try again."
-                    )
-
-                    sources = []
-
-
-                
-                # BAD REQUEST
-                elif response.status_code == 400:
-
-                    answer = (
-                        "The question could not be processed. "
-                        "Please check your question and try again."
-                    )
-
-                    sources = []
-
-
-                
-                # SERVER ERROR
-
-                elif response.status_code == 500:
-
-                    answer = (
-                        "The backend service is temporarily "
-                        "unavailable. Please try again later."
-                    )
-
-                    sources = []
-
-
-                
-                # OTHER RESPONSE
-                else:
-
-                    answer = (
-                        "An unexpected error occurred. "
-                        "Please try again later."
-                    )
-
-                    sources = []
 
 
         
-            # CONNECTION ERROR
-            except requests.exceptions.ConnectionError:
+            # APPLICATION ERROR
 
-                answer = (
-                    "Unable to connect to the backend service. "
-                    "Please try again later."
-                )
-
-                sources = []
-
-
-        
-            # TIMEOUT
-            except requests.exceptions.Timeout:
-
-                answer = (
-                    "The request took too long to process. "
-                    "Please try again."
-                )
-
-                sources = []
-
-
-            
-            # OTHER ERROR
             except Exception as error:
 
                 print(
@@ -396,7 +300,7 @@ if question:
 
                 answer = (
                     "An error occurred while processing "
-                    "your request. Please try again."
+                    "your request. Please try again later."
                 )
 
                 sources = []
@@ -404,6 +308,7 @@ if question:
 
         
         # DISPLAY ANSWER
+
         st.markdown(
             answer
         )
@@ -411,6 +316,7 @@ if question:
 
         
         # DISPLAY SOURCES
+
         if sources:
 
             st.divider()
@@ -426,20 +332,21 @@ if question:
                 )
 
 
-        
+    
         # FEEDBACK
+
         st.divider()
 
         st.write(
             "Was this answer helpful?"
         )
 
-
         col1, col2 = st.columns(2)
 
 
         
         # POSITIVE FEEDBACK
+
         with col1:
 
             if st.button(
@@ -466,8 +373,9 @@ if question:
                     )
 
 
-    
+
         # NEGATIVE FEEDBACK
+
         with col2:
 
             if st.button(
@@ -496,7 +404,10 @@ if question:
 
 
     # SAVE ASSISTANT MESSAGE
+
     st.session_state.messages.append({
         "role": "assistant",
         "content": answer
     })
+
+
