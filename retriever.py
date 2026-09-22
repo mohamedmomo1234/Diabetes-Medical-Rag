@@ -1,5 +1,4 @@
 from langchain_chroma import Chroma
-
 from embeddings import get_embeddings
 
 from config import (
@@ -11,6 +10,9 @@ from config import (
 )
 
 
+
+# VECTORSTORE
+
 def get_vectorstore():
 
     embeddings = get_embeddings()
@@ -21,6 +23,9 @@ def get_vectorstore():
         embedding_function=embeddings
     )
 
+
+
+# RETRIEVE DOCUMENTS
 
 def retrieve_documents(question: str):
 
@@ -41,6 +46,10 @@ def retrieve_documents(question: str):
 
             relevant_documents.append(document)
 
+
+    
+    # SORT BY RELEVANCE
+
     relevant_documents.sort(
         key=lambda doc: doc.metadata.get(
             "relevance_score",
@@ -52,9 +61,13 @@ def retrieve_documents(question: str):
     return relevant_documents[:FINAL_TOP_K]
 
 
+
+# BUILD CONTEXT
+
 def build_context(documents):
 
     if not documents:
+
         return ""
 
     context_parts = []
@@ -81,6 +94,7 @@ def build_context(documents):
         location = source
 
         if page is not None:
+
             location += f", page {page + 1}"
 
         context_parts.append(
@@ -98,6 +112,9 @@ Relevance Score: {score:.3f}
     return "\n".join(context_parts)
 
 
+
+# GET SOURCES
+
 def get_sources(documents):
 
     unique_sources = []
@@ -110,7 +127,7 @@ def get_sources(documents):
         )
 
         if source not in unique_sources:
+
             unique_sources.append(source)
 
     return unique_sources
-
