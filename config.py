@@ -1,12 +1,9 @@
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
 
-
 # GROQ
-
 GROQ_API_KEY = os.getenv(
     "GROQ_API_KEY"
 )
@@ -25,7 +22,6 @@ if not GROQ_API_KEY:
 
 
 # LANGSMITH
-
 LANGSMITH_API_KEY = os.getenv(
     "LANGSMITH_API_KEY"
 )
@@ -43,7 +39,6 @@ LANGSMITH_PROJECT = os.getenv(
 
 
 # MONGODB
-
 MONGODB_URI = os.getenv(
     "MONGODB_URI"
 )
@@ -61,7 +56,6 @@ MONGODB_COLLECTION = os.getenv(
 
 
 # ADMIN
-
 ADMIN_PASSWORD = os.getenv(
     "ADMIN_PASSWORD"
 )
@@ -69,7 +63,6 @@ ADMIN_PASSWORD = os.getenv(
 
 
 # CHROMA
-
 CHROMA_DIR = "chroma_db"
 
 CHROMA_COLLECTION = (
@@ -79,17 +72,13 @@ CHROMA_COLLECTION = (
 
 
 # RETRIEVAL
+TOP_K = 20
 
-TOP_K = 12
+FINAL_TOP_K = 8
 
-FINAL_TOP_K = 4
-
-RELEVANCE_THRESHOLD = 0.20
-
+RELEVANCE_THRESHOLD = 0.1
 
 
 # CHUNKING
-
-CHUNK_SIZE = 350
-
-CHUNK_OVERLAP = 80
+CHUNK_SIZE = 600
+CHUNK_OVERLAP = 120
