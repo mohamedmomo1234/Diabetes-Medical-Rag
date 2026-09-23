@@ -6,6 +6,7 @@ from config import ADMIN_PASSWORD
 
 from graph import medical_graph
 
+
 from database import (
     save_chat,
     get_chat_history
@@ -13,10 +14,13 @@ from database import (
 
 from feedback import save_feedback
 
+from ingest import ensure_vector_database
+
+ensure_vector_database()
+
 
 
 # PAGE CONFIGURATION
-
 st.set_page_config(
     page_title="Diabetes Medical RAG Assistant",
     page_icon="🩺",
@@ -26,7 +30,6 @@ st.set_page_config(
 
 
 # TITLE
-
 st.title(
     "🩺 Diabetes Medical RAG Assistant"
 )
@@ -94,7 +97,6 @@ with st.sidebar:
 
     
     # ADMIN CHAT HISTORY
-
     if st.session_state.get(
         "admin_authenticated",
         False
@@ -198,7 +200,6 @@ with st.sidebar:
 
 
 # SESSION CHAT HISTORY
-
 if "messages" not in st.session_state:
 
     st.session_state.messages = []
@@ -217,7 +218,6 @@ for message in st.session_state.messages:
 
 
 # USER QUESTION
-
 question = st.chat_input(
     "Ask your Diabetes medical question in Arabic or English..."
 )
@@ -227,7 +227,6 @@ if question:
 
     
     # SHOW USER QUESTION
-
     st.session_state.messages.append({
         "role": "user",
         "content": question
@@ -240,7 +239,6 @@ if question:
 
     
     # ASSISTANT
-
     with st.chat_message("assistant"):
 
         with st.spinner(
@@ -251,7 +249,6 @@ if question:
 
             
                 # RUN MEDICAL RAG DIRECTLY
-
                 result = medical_graph.invoke(
                     {
                         "question": question
@@ -271,7 +268,6 @@ if question:
 
             
                 # SAVE CHAT TO MONGODB
-
                 try:
 
                     save_chat(
@@ -308,7 +304,6 @@ if question:
 
         
         # DISPLAY ANSWER
-
         st.markdown(
             answer
         )
@@ -316,7 +311,6 @@ if question:
 
         
         # DISPLAY SOURCES
-
         if sources:
 
             st.divider()
@@ -334,7 +328,6 @@ if question:
 
     
         # FEEDBACK
-
         st.divider()
 
         st.write(
@@ -346,7 +339,6 @@ if question:
 
         
         # POSITIVE FEEDBACK
-
         with col1:
 
             if st.button(
@@ -375,7 +367,6 @@ if question:
 
 
         # NEGATIVE FEEDBACK
-
         with col2:
 
             if st.button(
@@ -404,7 +395,6 @@ if question:
 
 
     # SAVE ASSISTANT MESSAGE
-
     st.session_state.messages.append({
         "role": "assistant",
         "content": answer
