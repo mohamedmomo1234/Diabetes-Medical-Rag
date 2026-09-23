@@ -44,6 +44,18 @@ IMPORTANT RULES:
 
 13. Mention the relevant source documents when appropriate.
 
+14. The retrieved context may contain multiple document chunks that
+    each mention only part of the full picture (for example, one
+    chunk may list some symptoms and another chunk may list
+    additional symptoms). Read through ALL of the retrieved context
+    before answering, and combine every relevant fact from every
+    chunk into a single, complete, non-repetitive answer. Do not
+    limit the answer to only the first chunk you find relevant.
+
+15. When the question asks about symptoms, causes, risk factors, or
+    similar list-type information, provide the fullest list that the
+    combined retrieved context supports, not just a partial subset.
+
 MEDICAL CONTEXT:
 {context}
 
