@@ -251,6 +251,8 @@ The project is currently focused on Diabetes medical information and uses Chroma
 
 This project is for educational and software-development purposes. It does not provide medical diagnosis or personalized medical treatment. Users should consult qualified healthcare professionals for medical decisions.
 
+Author: Mohamed Said Abdalaziz // 
+https://github.com/mohamedmomo1234/Diabetes-Medical-Rag
 
 
 
