@@ -1,3 +1,4 @@
+import streamlit as st
 from langchain_chroma import Chroma
 from embeddings import get_embeddings
 
