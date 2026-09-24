@@ -12,7 +12,7 @@ from config import (
 
 
 # VECTORSTORE
-st.cache_resource@
+@st.cache_resource
 def get_vectorstore():
 
     embeddings = get_embeddings()
