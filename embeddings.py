@@ -1,3 +1,4 @@
+import streamlit as st
 from langchain_huggingface import HuggingFaceEmbeddings
 
 @st.cache_resource
