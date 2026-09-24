@@ -1,6 +1,9 @@
 🩺 Diabetes Medical RAG Assistant
 A medical Retrieval-Augmented Generation (RAG) chatbot focused on Diabetes medical information.
 
+**Author: Mohamed Said Abdalaziz // 
+https://github.com/mohamedmomo1234/Diabetes-Medical-Rag**
+
 ##Live Demo
 https://diabetes-medical-rag-huebamm32s5n2h6odvkmjnsdk.streamlit.app/
 
