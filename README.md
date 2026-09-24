@@ -2,8 +2,7 @@
 A medical Retrieval-Augmented Generation (RAG) chatbot focused on Diabetes medical information.
 
 ##Live Demo
-https://diabetes-medical-rag-lpjhcaxglefwmsayewvgup.streamlit.app/
-
+https://diabetes-medical-rag-huebamm32s5n2h6odvkmjnsdk.streamlit.app/
 ##Project Overview
 This project is a medical RAG chatbot designed to provide educational information about Diabetes using a medical knowledge base. The application combines document retrieval, semantic embeddings, ChromaDB, LangGraph, Groq, security controls, MongoDB, and Streamlit.
 
